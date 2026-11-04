@@ -26,11 +26,12 @@
 ### 1.1 What KIZAMI DJ can do
 
 - Import your own music files and automatically analyze BPM (tempo), key, and beat positions.
-- Play tracks on two decks (A / B) and blend them by adjusting volume and tone on the mixer.
+- Play tracks on three decks (A / B / C) and blend them by adjusting volume and tone on the mixer.
 - Use loops, Hot Cues (mark any position and jump to it instantly), Beat Jump (jump by beats), and SYNC (match BPM).
 - Apply Beat FX (echo, reverb, and more).
 - Preview the next track in headphones (CUE; requires a 4-channel output device).
 - Record your mix to a WAV file.
+- (Pro version) Split a track into vocals, drums, bass, and other, and change the volume of each part (4.10).
 - Control everything from the keyboard or a MIDI controller.
 
 ### 1.2 System requirements
@@ -38,6 +39,7 @@
 | Item | Details |
 |---|---|
 | OS | Windows (parts such as the recording destination are built with Windows-only code). The list of supported versions is unverified |
+| Window width | Because three decks sit side by side, the window must be at least 1680 px wide (it cannot be made smaller; the default is 1800 px). On a laptop with a width of about 1536 px, the whole screen does not fit |
 | Supported track formats | MP3, AAC (M4A), FLAC, WAV, AIFF, ALAC |
 | Headphone CUE | Requires a 4-channel output device (channels 3-4 are the headphones) |
 | Waveform display | Requires an environment where WebGL2 works |
@@ -69,13 +71,17 @@ The first time you launch the app, a license agreement screen appears before the
 ├───────────────────────────────────────────────────────────┤
 │ Zoomed waveform A (8 seconds)                             │
 │ Zoomed waveform B                                         │
-├──────────────┬──────────────────┬─────────────────────────┤
-│ Deck A       │ Mixer            │ Deck B                  │
-│ (full wave)  │ TRIM/EQ/FILTER   │ (full wave)             │
-│ CUE PLAY SYNC│ VOL, CUE         │ CUE PLAY SYNC           │
-│ HOT CUE, LOOP│ X-FADER, MASTER  │ HOT CUE, LOOP           │
-│ TEMPO        │ HP LEVEL / MIX   │ TEMPO                   │
-├──────────────┴──────────────────┴─────────────────────────┤
+│ Zoomed waveform C                                         │
+├────────┬──────────────────┬──────────┬────────────────────┤
+│ Deck A │ Mixer            │ Deck B   │ Deck C             │
+│(full   │ A / B / C        │(full     │(full wave)         │
+│ wave)  │ TRIM/EQ/FILTER   │ wave)    │ CUE PLAY SYNC      │
+│CUE PLAY│ VOL, CUE         │CUE PLAY  │ HOT CUE, LOOP      │
+│SYNC    │ X-FADER, MASTER  │SYNC      │ TEMPO              │
+│HOT CUE │ HP LEVEL / MIX   │HOT CUE   │                    │
+│LOOP    │                  │LOOP      │                    │
+│TEMPO   │                  │TEMPO     │                    │
+├────────┴──────────────────┴──────────┴────────────────────┤
 │ BEAT FX 1 / BEAT FX 2                                     │
 ├───────────────────────────────────────────────────────────┤
 │ Library (folders, playlists, track list)                  │
@@ -83,7 +89,8 @@ The first time you launch the app, a license agreement screen appears before the
 ```
 
 - If the window is short, the screen scrolls vertically.
-- Deck A is pink and Deck B is light blue.
+- From the left, the order is Deck A, Mixer, Deck B, Deck C. The mixer has three channels, A / B / C (chapter 5).
+- Deck A is pink, Deck B is light blue, and Deck C is purple.
 - Keyboard shortcuts are disabled while Settings, the recovery screen, the startup screen, or MIDI Learn is active.
 
 ### 2.1 Top bar (TopBar)
@@ -198,11 +205,11 @@ When you import a track, its BPM, key, and beat positions are analyzed automatic
 
 ### 3.7 Reading the track list
 
-#### Deck column (A / B)
+#### Deck column (A / B / C)
 
-- The column to the left of the title shows which deck the track is on. Deck A is in pink text, Deck B in light blue.
+- The column to the left of the title shows which deck the track is on. Deck A is in pink text, Deck B in light blue, Deck C in purple.
 - While playing, a ▶ is added (such as "▶A") and the text is bold and glowing. If the track is merely loaded and stopped, only colored text and an outline are shown.
-- If the same track is on both decks, both A and B are shown.
+- If the same track is on several decks, the letters of all those decks are shown.
 - The row of a loaded track has a deck-colored bar at its left edge, and its title is bold.
 - Tooltip: hovering shows "Playing on Deck A" or "Loaded on Deck A".
 
@@ -247,16 +254,16 @@ A ★ is added to a track whose key has one of the following relationships with 
 
 ## 4. Decks
 
-How to use the two decks (A / B) on the left and right of the screen.
+How to use the three decks (A / B / C) on the screen. All three work the same way. However, Deck C cannot be controlled from a MIDI controller; it is operated with the mouse and keyboard only (8.3, chapter 9).
 
 ### 4.1 Loading a track
 
 | Method | Operation |
 |---|---|
 | Drag | Drag a track row from the Library onto a deck |
-| Shortcut | Select a track in the Library, then Shift+← (Deck A) / Shift+→ (Deck B) |
+| Shortcut | Select a track in the Library, then Shift+← (Deck A) / Shift+→ (Deck B) / Shift+↓ (Deck C) |
 
-- An empty deck shows "No track loaded (drag one from the library, or press Shift+←)" (Shift+→ for B).
+- An empty deck shows "No track loaded (drag one from the library, or press Shift+←)" (Shift+→ for B, Shift+↓ for C).
 - While loading it shows "Loading…". If loading fails, the cause and a remedy are shown.
 - The full waveform loads in two stages, starting from the beginning. Parts not yet loaded are shown dark.
 - Files that are not found cannot be loaded.
@@ -272,12 +279,12 @@ How to use the two decks (A / B) on the left and right of the screen.
 |---|---|
 | PLAY (▶ / ❚❚) | Play / pause |
 | CUE | When stopped, sets a Cue point at the current position. It sounds only while held, and returns to the Cue point when released (hold style) |
-| SYNC | Matches the other deck's BPM (4.7). Cannot be pressed without beat analysis |
+| SYNC | Matches the master deck's BPM (4.7). Cannot be pressed without beat analysis |
 | M | Makes this deck the master. Press again to return the master to automatic |
 
 ### 4.4 Hot Cue
 
-A feature for marking any position in a track and jumping straight to it. Each deck has 8 of them, numbered 1-8.
+A feature for marking any position in a track and jumping straight to it. Each deck has 3 buttons on screen, numbered 1-3.
 
 | State | Operation | Behavior |
 |---|---|---|
@@ -286,6 +293,9 @@ A feature for marking any position in a track and jumping straight to it. Each d
 | Set | Shift+press | Deletes it |
 
 - Hovering over a button shows its position and key.
+- Internally the data still holds 8 Hot Cues, numbered 1-8. Only 1-3 are shown on screen.
+- Hot Cues 4-8 have no button and no waveform mark on screen. However, any 4-8 you have already recorded are not erased. You can still record, play, and delete them from the keyboard (chapter 10) and with MIDI buttons that are already assigned.
+- From the screen, MIDI Learn can newly assign only Hot Cues 1-3 (8.3). To assign 4-8 to MIDI, use the bundled mapping (chapter 9).
 
 ### 4.5 Loops
 
@@ -308,12 +318,12 @@ Plays a chosen section repeatedly. Requires beat analysis.
 
 Terms: **tempo** is the playback speed of a track, and **pitch** is the height of the sound. Normally, changing the speed also changes the pitch.
 
-- **TEMPO fader** (on the outer edge of the deck; left for A, right for B): moving it down speeds up (+), up slows down (−). Double-click to reset to 0%.
+- **TEMPO fader** (on the outer edge of the deck; left edge for A, right edge for B and C): moving it down speeds up (+), up slows down (−). Double-click to reset to 0%.
 - The current value is shown in %. Each press of the range button cycles ±8% → ±16% → ±50%.
 - **KEYLOCK**: keeps the pitch the same when you change the tempo.
 - **BEND**: while the speed is temporarily shifted with the jog wheel (MIDI controller), "BEND +x.x%" is shown.
 - **SYNC**: automatically matches the other deck's BPM. Requires beat analysis.
-- **Master**: the deck used as the reference for BPM and key. Set it manually with the M button; releasing it returns it to automatic. It is also the reference for the ★ mark (3.7).
+- **Master**: the deck used as the reference for BPM and key. Set it manually with the M button; releasing it returns it to automatic. It is also the reference for the ★ mark (3.7). Deck C can also become the master automatically when it is playing with its VOL raised (the same rule as A / B).
 
 ### 4.8 When there is no beat analysis
 
@@ -323,16 +333,75 @@ The deck shows "⚠ No beat grid analysis(SYNC, loops and Beat Jump are unavaila
 
 | Waveform | Details |
 |---|---|
-| Zoomed waveform (top of screen) | 8 seconds with the playback position at the center. Beat grid, loops, Cue, and Hot Cues are overlaid |
+| Zoomed waveform (top of screen) | 8 seconds with the playback position at the center. Beat grid, loops, Cue, and Hot Cues are overlaid (Hot Cues 1-3 only; marks for 4-8 are not shown) |
 | Full waveform (in the deck) | The whole track. Click to move to that position |
 
 - If WebGL2 is unavailable, "Cannot display the waveform (WebGL2 is unavailable)" is shown; if drawing fails, "Cannot display the waveform (drawing failed)" is shown.
+
+### 4.10 Stems (Pro version only)
+
+Splits a track into four parts (Vocals, Drums, Bass, Other) and lets you raise or lower the volume of each, per deck. This section is not shown in the Free version.
+
+#### How the splitting works
+
+- When you load a track onto a deck, it starts splitting automatically. It splits **starting near the playback position**, so you can use it at the current position within a few seconds (about 2-4 seconds in measurements). Splitting the whole track takes about 20-40 seconds for a 4-minute track (it varies with the speed of your PC and whether other decks are also splitting). When several decks split at once, they take turns using a single model in small slices, so each deck gets slower as the number of decks grows (with 3 decks at once, measurements showed about 6-7 seconds until the current position is usable, and about 50-85 seconds until the whole track is done, depending on track length). This is not a waiting queue, so it is not only the track loaded last that gets pushed back.
+- Parts that have not been split yet play as **the original track**. If you jump to a different part of the track, it splits from there (this takes a few seconds).
+- The strip below the waveform shows the range that has been split.
+- While all knobs are at 100% and nothing is muted, the original track is played as it is (to keep the sound quality unchanged). As soon as you lower any one, playback switches to the sum of the parts (it switches smoothly over about 20 ms).
+- Sounds above about 11 kHz cannot be separated and **go into Other**. Lowering Other also lowers the very top of cymbals and similar content.
+
+#### Reading the panel ("Stems" in the deck)
+
+| Display / control | Details |
+|---|---|
+| ▾ Stems / ▸ Stems | Open / collapse the panel (the status stays visible when collapsed) |
+| Status | Waiting / Separating xx% (splitting) / Ready (everything is split) / Unavailable (cannot be used) |
+| V / D / B / O | Volume of Vocals, Drums, Bass, Other (0-100%; double-click to return to 100%) |
+| Rhythm (knob) | Raises or lowers Drums and Bass together (see "How to use Rhythm" below) |
+| M | Mute that part |
+| Reset | Everything at 100%, nothing muted |
+| Instrumental | Mute Vocals only |
+| Acapella | Play Vocals only |
+| Drums | Play Drums only |
+| Rhythm (button) | Play Drums and Bass only |
+
+- Pressing a preset returns all volumes to 100% and changes only the mutes.
+- When no track is loaded, or when a track cannot be split, the knobs and buttons cannot be pressed.
+
+#### How to use Rhythm
+
+- Rhythm is a volume that applies to both Drums and Bass. Drums and Bass each play at their own volume multiplied by the Rhythm volume.
+- **Heavy electronic sub-bass is hard to separate**, and much of the low end can end up in Drums or Other. In such tracks, moving Bass alone does not remove or keep the low end cleanly.
+- When splitting finishes and the track turns out to be one where bass is hard to separate, "Bass is hard to separate in this track. Try Rhythm." is shown and the Rhythm frame glows. In that case, move the low end and drums together with **Rhythm** instead of Bass.
+- Examples: to pull the previous track's low end and beat out during a transition, lower that track's Rhythm. To keep only the vocals, use Acapella.
+
+#### Preparing in advance (Prepare stems)
+
+- Right-click a track in the Library and press **[Prepare stems]** to split it before loading it onto a deck. Progress is shown in the TopBar, such as "Preparing stems 1/3".
+- The result is saved in the cache, and the next time you load the same track the whole track becomes usable in a few seconds (about 2-6 seconds in measurements). The cache location and limit can be changed under "Stems" in 8.1.
+
+#### When it cannot be used
+
+- The status becomes "Unavailable" and the reason is shown. The **original track keeps playing as it is** in the meantime.
+  - "The stem model (spleeter4.onnx) was not found in the model folder": the file used for splitting cannot be found. Reinstall the app.
+  - "Couldn't load the stem model": the file is damaged, or a component needed to load it (a DLL) is missing. Reinstall the app.
+- The model for splitting (`spleeter4.onnx`) and its component (`onnxruntime.dll`) are included in the installer. At startup they are copied automatically to the model folder (by default `%APPDATA%\KIZAMI DJ\models`), so you do not need to place them yourself (they are copied only when missing or when the size differs). If you have changed the model folder to another location, they are copied there.
+
+#### Assignments
+
+- Keyboard: the mute for each part (such as Mute Vocals) is unassigned at first. You can assign them in **Settings → Shortcuts** (8.2).
+- MIDI: the knobs and mutes can be assigned with MIDI Learn (8.3).
+
+#### What has not been verified
+
+- How it sounds (quality of the separation, the sound of switching) has not yet been checked by human ears.
+- Operating Stems from a MIDI device (such as the MixTrack Pro) has not been checked on real hardware.
 
 ---
 
 ## 5. Mixer
 
-The mixer in the center of the screen is made up of two channels (A / B) and a shared section.
+The mixer in the center of the screen is made up of three channels (A / B / C) and a shared section. Channel C has TRIM, EQ, FILTER, VOL, and CUE just like A / B.
 
 ### 5.1 Knob and fader controls
 
@@ -367,12 +436,14 @@ The mixer in the center of the screen is made up of two channels (A / B) and a s
 
 ### 5.6 CUE (headphones)
 
-- The **CUE A / CUE B** button on each channel lets you listen to that channel in headphones (it is not sent to the main output).
+- The **CUE A / CUE B / CUE C** button on each channel lets you listen to that channel in headphones (it is not sent to the main output).
 - It works only with a 4-channel output device. When unavailable, the button cannot be pressed and "No headphone output (channels 3-4)" is shown.
 
 ### 5.7 Crossfader (X-FADER)
 
 - Move it left and right to switch the volume between A and B. The display reads "CENTER", "A n%", or "B n%". Double-click for center.
+- **Deck C does not pass through the crossfader (Thru).** Channel C shows "THRU", and C's volume does not change wherever you move the crossfader. C's volume is decided only by C's VOL fader.
+- There is no assign switch for choosing between A / B / C.
 - The curve (smooth / cut) can be changed in Settings (8.1).
 
 ### 5.8 MASTER
@@ -400,7 +471,7 @@ Effects that follow the beat of the track. There are two units, BEAT FX 1 and 2.
 | Type | ECHO / REVERB / FLANGER / FILTER |
 | Beats | Choose with ◀ ▶ from 1/16, 1/8, 1/4, 1/2, 3/4, 1, 2, 4, 8, 16, 32, 64. The length of the effect's cycle |
 | MIX | How much effect is applied (wet/dry). Default 50%, in steps of 5% |
-| Target | Choose A / B / M (the whole master) |
+| Target | Choose A / B / C / M (the whole master) |
 | BPM display | The BPM the effect is based on |
 | ON / OFF | Turns the effect on/off |
 
@@ -454,6 +525,33 @@ Open with the **⚙** at the top right. Esc closes it. There are three tabs: Gen
 - It shows "Using Beat This! (AI beat detection)." or "Using the simple estimator." In the simple case, the reason the AI cannot be used is also shown.
 - Specify the model folder with **[Choose folder]** and revert with **[Reset to default]**.
 
+#### Stems (Pro version only)
+
+Settings for the cache that stores the split parts (4.10).
+
+| Item | Details |
+|---|---|
+| Cache folder | Where the cache is kept. At first it is `stems-cache` inside the app's data folder |
+| [Choose folder] / [Reset to default] | Choose a location / return to the original location. Even if you change it, files in the previous location are not deleted ("Files in the previous folder are not deleted. You can remove them yourself." is shown; delete them yourself if you do not need them) |
+| Cache limit (GB) | The limit. A whole number from 1 to 200 (5 at first). Beyond the limit, the oldest items are deleted first. If you enter a value out of range, "Enter a whole number from 1 to 200" is shown and it is not saved |
+| Used: ... | The space used and the number of tracks |
+| [Clear cache] | Deletes the entire cache. Press **[Really clear]**, shown after the first press, to delete it. The tracks are split again the next time they are loaded |
+
+- The cache for one track (4 minutes) is about 80-90 MB. 5 GB holds about 60 tracks.
+
+#### License (Pro)
+
+After you buy KIZAMI DJ Pro, you receive a license key that starts with `KDJ1-`. Enter it, restart the app, and the Pro features (such as AI Stems) become available.
+
+1. Open Settings with the **⚙** at the top right and find the **License** section in the General tab.
+2. Paste the key into the box ("Paste your license key"). Extra spaces or line breaks around the key are fine.
+3. Press **[Apply]**. If the key is accepted, the status shows "KIZAMI DJ Pro — Order …, issued …" and "Restart KIZAMI DJ to apply." appears.
+4. Quit KIZAMI DJ and start it again. The app is now Pro.
+
+- If the key is wrong or damaged, the reason is shown and the key is not saved (a valid key you entered earlier stays as it is).
+- To remove the key, press **[Remove]** and restart. The app goes back to Free (your tracks and library are not deleted).
+- The key is checked without an internet connection. Without a key, KIZAMI DJ keeps working as the Free version.
+
 ### 8.2 Shortcuts tab
 
 - Press **[Change]** on an action's row, then press the key you want to assign. Esc cancels.
@@ -461,11 +559,11 @@ Open with the **⚙** at the top right. Esc closes it. There are three tabs: Gen
 - If you choose a key that is already in use, "{combo} is already used by {name}. Swap them?" is shown. Choose **[Swap]** or **[Cancel]**.
 - Each row has **[Reset]**, and there is **[Reset all to default]** for everything.
 - Keys that cannot be assigned: Tab, Escape, CapsLock, NumLock, kana, a modifier key alone, combinations with Alt or Win, Shift+Ctrl together, and Ctrl+C/V/X/A/Z/Y. Numpad digits cannot be assigned to Hot Cues, and cannot be combined with Shift.
-- Key labels are shown as US-keyboard engravings (for example -, =, `, ', Numpad1).
+- Key labels are shown as US-keyboard engravings (for example -, =, `, ', ¥, Ro, Numpad1). They may differ from the engravings on a Japanese (JIS) layout keyboard.
 
 ### 8.3 MIDI tab
 
-Settings for using a MIDI controller. For supported devices and control tables, see chapter 9.
+Settings for using a MIDI controller. For supported devices and control tables, see chapter 9. MIDI can operate only Decks A and B. Deck C does not support MIDI (operate it with the mouse and keyboard).
 
 #### Devices and mappings
 
@@ -488,6 +586,8 @@ A feature that lets you link on-screen controls to your controller's knobs and b
 6. "{midi} assigned to {action}." appears, and the type (button, knob, jog, 14-bit) is shown. Choose **[Redo]** or **[Next control]**.
 7. If no message arrives, "No message received." appears. Choose **[Try again]** or **[Cancel]**.
 
+- **Controls on Deck C cannot be chosen.** MIDI supports only the two decks A and B. Controls on C get no Learn outline, and clicking them does not proceed to assignment.
+- Because the screen shows only Hot Cues 1-3, the Hot Cues you can newly assign with Learn are also 1-3. Existing assignments for 4-8 keep working as they are.
 - During Learn, controls that can be assigned get an outline. Finish with **[Exit]** in the TopBar or with Esc.
 
 #### Jog wheel (scratch and pitch bend)
@@ -550,6 +650,7 @@ Notifications disappear after 6 seconds (errors stay until closed). Up to 4 are 
 | Pioneer DJ DDJ-FLX4 | **Not verified on real hardware.** The mapping was transcribed from the official MIDI message list. It may not work or may be off |
 | Other devices | No mapping is included. Assign controls yourself with MIDI Learn (8.3) |
 
+- MIDI supports Decks A / B. **Deck C does not support MIDI.** There is no C column in the tables below, and C cannot be assigned even with MIDI Learn.
 - You can change the mapping from the selector on the tab. The bundled mappings are read-only.
 - On Windows, only one app can open a given MIDI port. Close other DJ software and the like.
 - Even similar models (such as MixTrack Pro 3) may use different MIDI numbers. In that case, choose a mapping again on the MIDI tab, or assign controls with MIDI Learn.
@@ -631,17 +732,21 @@ These are the defaults. You can change them on the Shortcuts tab in Settings (8.
 
 ### 10.1 Decks
 
-| Action | Deck A | Deck B |
-|---|---|---|
-| Play (Deck A Play / Deck B Play) | Z | M |
-| Cue | X | N |
-| Sync | C | B |
-| Auto Loop (4 beats; exits the loop if in one) | S | K |
-| Beat Jump Back | A | J |
-| Beat Jump Forward | D | L |
-| Hot Cue 1-4 | 1 2 3 4 | 7 8 9 0 |
-| Hot Cue 5-8 | Q W E R | U I O P |
-| Hot Cue delete | Shift+the Hot Cue key | Shift+the Hot Cue key |
+| Action | Deck A | Deck B | Deck C |
+|---|---|---|---|
+| Play (Deck A Play / Deck B Play / Deck C Play) | Z | M | T |
+| Cue | X | N | G |
+| Sync | C | B | V |
+| Auto Loop (4 beats; exits the loop if in one) | S | K | Y |
+| Beat Jump Back | A | J | F |
+| Beat Jump Forward | D | L | H |
+| Hot Cue 1-4 | 1 2 3 4 | 7 8 9 0 | (1-3 only) - = \ (key codes Minus, Equal, Backslash; on a Japanese layout the physical keys differ: Equal is the ^ key and Backslash is the ] key) |
+| Hot Cue 5-8 | Q W E R | U I O P | None |
+| Hot Cue delete | Shift+the Hot Cue key | Shift+the Hot Cue key | Shift+the Hot Cue key |
+
+- The Hot Cue 4-8 keys work even though there are no buttons on screen (A / B). Deck C has 3 Hot Cues, 1-3.
+- The Stems part mutes for Deck C (such as Mute Vocals) are unassigned at first (8.2).
+- If, in an earlier setup, you had changed an A / B action to the same key as one of C's defaults (T, G, V, Y, F, H, etc.), that A / B action is returned to its default at startup. If this bothers you, reassign it in Settings → Shortcuts.
 
 ### 10.2 Library and other
 
@@ -650,6 +755,7 @@ These are the defaults. You can change them on the Shortcuts tab in Settings (8.
 | Library Select Up / Library Select Down | ↑ / ↓ (hold to repeat) |
 | Library Load to Deck A | Shift+← |
 | Library Load to Deck B | Shift+→ |
+| Library Load to Deck C | Shift+↓ |
 | Library Search | Ctrl+F |
 | Recording Start/Stop | Ctrl+R |
 
@@ -692,9 +798,9 @@ These are the defaults. You can change them on the Shortcuts tab in Settings (8.
 | Camelot | A notation that expresses a track's key as 1A-12B. Neighboring keys are easy to match (3.7) |
 | Beat grid | A scale showing where the beats of a track fall. The foundation of SYNC, loops, and Beat Jump |
 | Deck | One player that plays a track |
-| Mixer | The device (screen) that adjusts the volume and tone of two decks and blends them |
+| Mixer | The device (screen) that adjusts the volume and tone of the decks and blends them |
 | Master | The deck used as the reference for BPM and key. Or the final output |
-| SYNC | A feature that matches the BPM (and beats) of the two decks |
+| SYNC | A feature that matches the BPM (and beats) between decks |
 | CUE | (1) A position to start a track from, or the operation of returning to it (2) The mixer's CUE button: listen to that sound in headphones |
 | Hot Cue | A mark placed at any position. A button jumps to it instantly |
 | Loop | Playing a section repeatedly |
@@ -709,7 +815,7 @@ These are the defaults. You can change them on the Shortcuts tab in Settings (8.
 | KILL | Cutting a band completely |
 | FILTER | A feature that cuts the lows or highs (LPF / HPF) |
 | LPF / HPF | Low-pass (cuts highs) / high-pass (cuts lows) |
-| Crossfader | Switches the volume between A and B with a single horizontal fader |
+| Crossfader | Switches the volume between A and B with a single horizontal fader (Deck C does not pass through it: Thru) |
 | Limiter | A feature that automatically holds the level below a set volume to prevent clipping |
 | Beat FX | Effects applied in time with the beat (ECHO, REVERB, FLANGER, FILTER) |
 | MIDI | A communication standard connecting instruments and controllers to a computer |
