@@ -32,6 +32,7 @@
 - Preview the next track in headphones (CUE; requires a 4-channel output device).
 - Record your mix to a WAV file.
 - (Pro version) Split a track into vocals, drums, bass, and other, and change the volume of each part (4.10).
+- (Pro version) Let the Auto Mixer pick the next track, join the tracks, and keep playing (4.11).
 - Control everything from the keyboard or a MIDI controller.
 
 ### 1.2 System requirements
@@ -59,6 +60,17 @@ If startup fails, the recovery screen appears (8.4).
 
 The first time you launch the app, a license agreement screen appears before the main screen. Read it and press **[Accept]**; the version of the text you agreed to is saved in the settings, and the screen will not appear on later launches. If you press **[Decline]**, the app quits (nothing is saved, so the screen appears again the next time you launch). Until you agree, neither on-screen controls nor keyboard shortcuts work. However, in this version, MIDI controller input still reaches the app while it waits for your agreement. If the text of the agreement is revised, even users who have already agreed are asked to agree again at launch.
 
+### 1.4 Japanese edition (0.2.0 JP)
+
+This edition shows every on-screen word in Japanese. The features are the same as the English edition, and the version is shown as "0.2.0 JP".
+
+- **It installs as a separate app.** It is named "KIZAMI DJ JP", and both it and the English "KIZAMI DJ" can be installed on the same computer (with separate shortcuts).
+- **The library, settings, and license are shared with the English edition.** For that reason, **do not run the two at the same time.**
+- **It does not update itself.** To update the Japanese edition, run the new installer.
+- **The License Agreement is authoritative in English.** The Japanese edition adds a Japanese reference translation below the English text (if the two are read differently, the English prevails).
+- DJ terms (SYNC, KEYLOCK, LOOP, CUE, BPM, EQ, FX), product names, and deck names (A, B, C) stay in English.
+- Even in the Japanese edition, these stay in English: the master's auto label (`MASTER (auto)`), the names and buttons of the Stems tracks (`Stems`, `Reset`, `Instrumental`, `Acapella`, `Drums`, `Rhythm`, and so on), and the mixer's auto gain (such as `Auto -5.8 dB`).
+- This manual is written for the English edition's labels. Where the Japanese edition differs, a matching list is given (such as at the end of 4.11).
 ---
 
 ## 2. Screen Overview
@@ -396,6 +408,95 @@ Splits a track into four parts (Vocals, Drums, Bass, Other) and lets you raise o
 
 - How it sounds (quality of the separation, the sound of switching) has not yet been checked by human ears.
 - Operating Stems from a MIDI device (such as the MixTrack Pro) has not been checked on real hardware.
+
+### 4.11 Auto Mixer (Pro version only)
+
+The Auto Mixer picks the next track, overlaps it on a bar line, and keeps the music going without anyone touching the controls. It is meant for places with no DJ, such as an unattended lounge. In the free version the screen only shows "Auto Mixer is a Pro feature (available in KIZAMI DJ Pro)" and you cannot start it.
+
+The "Auto Mixer" bar appears in the lower part of the screen, below the mixer and above the library. Its buttons and fields sit on one line and wrap only when the window is too narrow. Use ▾ / ▸ to collapse or expand it.
+
+#### How it works
+
+- It uses **decks A and B only**, alternating between them. Deck C is not used (manual only).
+- Tracks are overlapped on a bar line. The overlap is 16 bars as a base. While they overlap, the low end (the kick and so on) is handed over in a short time (about 1/4 beat) so that only one of the two tracks plays the low end.
+- While it runs, the crossfader curve is fixed to Smooth (it goes back when you stop).
+- It makes no network connection during use.
+
+#### Starting
+
+1. **From a playlist**: choose a playlist under "Playlist" and press **Start**. Tracks play in the order of the playlist.
+2. **From the whole library**: press **Pick from the whole library**. The machine picks the next track from the whole library. The basis is "the mood fits", which here means the kick and drum rhythm match (it also looks at how close the tempos are). Tracks that have not been analyzed yet come last. If the library has no playable track, it shows "The library has no playable tracks" and does not start.
+
+Once it is running, the bar shows the state (Playing / Mixing / Paused / Stopped), the track playing now (Now), and the next track (Next).
+
+#### Controls while it runs
+
+| Button / field | What it does |
+|---|---|
+| Stop | Stops it |
+| Pause / Resume | Pauses / resumes |
+| Skip | Moves on to the next track (with a fade of about 6 seconds) |
+| Exclude next | Leaves the next track out of this auto mix; another track is picked |
+| Direction | Which way to pick tracks: **Auto**, **Calmer** (toward calmer tracks), **Livelier** (toward livelier tracks). Over a long run the mood drifts a little. A change takes effect from the next pick |
+| Tempo tolerance (%) | How far apart two tracks' tempos may be. 5% at first (range 1 to 20) |
+| Same-track gap (min) | How long to wait before playing the same track again. 120 minutes (2 hours) at first |
+
+- Tempo tolerance and the same-track gap are saved as settings, but **changing them while it runs does not take effect at once** (it applies the next time you start). Only Direction takes effect at once.
+- A deck you operate by hand (on screen or with MIDI) is left alone by the Auto Mixer until the next changeover is over.
+- If you load a different track onto the next deck after the next track has been chosen, the Auto Mixer does not treat that track as its own. It cancels its plan and picks the next track again.
+- The inside of the app can replace the next track with one you name, but there is no button for it on the screen.
+
+#### When the tempo is out of range
+
+- In playlist order, even when the next track is outside the tempo tolerance, **the order is kept**. Only that track is joined with a long fade (about 20 seconds), and its tempo is not matched.
+- Tracks with no beat information, tracks whose tempo changes, and tracks that are not 4/4 are also joined with the long fade only.
+- Tracks at about double or half the tempo (such as 70 and 140 BPM) are treated as close tempos.
+
+#### The "Not enough candidates" notices (loosening)
+
+To **keep playing without stopping** when candidates run out, the rules are loosened step by step. While they are loosened, a notice appears in the bar.
+
+| Notice | Meaning |
+|---|---|
+| Not enough candidates: shortening the same-track gap | Picking with a shorter same-track gap |
+| Not enough candidates: widening the tempo tolerance | Picking with a wider tempo tolerance |
+| Not enough candidates: playing the closest available track | The last resort: picking from the tracks that can be used (you may hear the same track again) |
+
+In the last resort, the track that was played longest ago comes first (a track that has never been played comes before all others). This keeps it from going back and forth between the same two tracks when few candidates are left.
+
+It stops when every track has been excluded.
+
+#### When something goes wrong
+
+- If a track's file is missing or cannot be read, that track is skipped and it moves on.
+- If the audio device is unplugged, it pauses and tells you, and resumes when the device comes back.
+
+#### What has not been verified (an honest note)
+
+- **A listening check of about 30 minutes with nobody touching it has not been done yet** (waiting for the owner's check; DEC-047 in decision-log.md). Human ears have not yet checked, with real tracks, whether the joins sound natural, whether the kick sounds doubled, or whether the sound breaks up.
+- The numeric checks were made only with synthesized four-on-the-floor tracks (kick offset at most 2.5 ms, level dip within 1.4 dB, no silence longer than 50 ms). Real tracks may not give these numbers.
+- The level dip of the long fade has not been measured.
+- Tracks whose bar line is off (the beats match but the first beat of the bar is shifted) cannot be detected.
+- The kick pattern is built from the analyzed beat grid. It may differ from a grid you fixed by hand or one from rekordbox.
+- A person has not gone through the look and feel of the screen from start to finish.
+- The speed of picking from the whole library has not been measured on a large library (thousands of tracks).
+- The setting "resume automatically when the app restarts" (`resumeOnRestart`) exists inside the app, but it is not shown on the screen and does nothing.
+- Tracks played by the Auto Mixer also count toward play counts (also when it plays from a playlist).
+
+#### Labels in the Japanese edition
+
+| English edition | Japanese edition (1.4) |
+|---|---|
+| Auto Mixer | オートミキサー |
+| Stopped / Paused / Mixing / Playing | 停止中 / 一時停止中 / ミックス中 / 再生中 |
+| Now / Next | 現在 / 次 |
+| Stop / Pause / Resume / Skip | 停止 / 一時停止 / 再開 / スキップ |
+| Exclude next | 次の曲を除外 |
+| Playlist / Start | プレイリスト / 開始 |
+| Pick from the whole library | ライブラリ全体から選ぶ |
+| Direction (Auto / Calmer / Livelier) | 曲選びの向き (おまかせ / 落ち着いた曲 / 盛り上がる曲) |
+| Tempo tolerance (%) | テンポ許容範囲 (%) |
+| Same-track gap (min) | 同じ曲の間隔 (分) |
 
 ---
 
